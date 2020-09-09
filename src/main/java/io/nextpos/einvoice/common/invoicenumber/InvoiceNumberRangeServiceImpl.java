@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
-@Transactional
+@Transactional("mongoTx")
 public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM");

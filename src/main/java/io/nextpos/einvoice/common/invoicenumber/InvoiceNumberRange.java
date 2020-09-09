@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document
-@CompoundIndexes({@CompoundIndex(name = "unique_ubn_range_identifier_index", def = "{'ubn': 1, 'rangeIdentifier': 1}")})
+@CompoundIndexes({@CompoundIndex(name = "unique_ubn_range_identifier_index", def = "{'ubn': 1, 'rangeIdentifier': 1}", unique = true)})
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InvoiceNumberRange {

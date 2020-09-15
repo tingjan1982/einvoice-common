@@ -1,13 +1,10 @@
 package io.nextpos.einvoice.common;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.internal.MongoClientImpl;
-import com.mongodb.connection.ClusterType;
 import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
@@ -15,6 +12,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.distribution.Versions;
 import de.flapdoodle.embed.process.distribution.GenericVersion;
 import de.flapdoodle.embed.process.runtime.Network;
+import io.nextpos.einvoice.common.invoice.PendingEInvoiceQueue;
 import io.nextpos.einvoice.common.invoicenumber.InvoiceNumberRange;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoProperties;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -39,7 +36,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
-@EnableMongoRepositories(basePackageClasses = InvoiceNumberRange.class)
+@EnableMongoRepositories(basePackageClasses = {InvoiceNumberRange.class, PendingEInvoiceQueue.class})
 public class TestApplication {
 
     private static final byte[] IP4_LOOPBACK_ADDRESS = {127, 0, 0, 1};
@@ -53,7 +50,7 @@ public class TestApplication {
         this.properties = properties;
     }
 
-    @Bean
+    @Bean("mongoTx")
     public MongoTransactionManager mongoTransactionManager(MongoDatabaseFactory dbFactory) {
         return new MongoTransactionManager(dbFactory);
     }

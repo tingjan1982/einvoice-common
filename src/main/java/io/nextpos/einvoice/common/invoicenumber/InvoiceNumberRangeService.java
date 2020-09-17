@@ -15,4 +15,6 @@ public interface InvoiceNumberRangeService {
     List<InvoiceNumberRange> getInvoiceNumberRanges(String ubn);
 
     String resolveInvoiceNumber(String ubn);
+
+    String getCurrentRangeIdentifier();
 }

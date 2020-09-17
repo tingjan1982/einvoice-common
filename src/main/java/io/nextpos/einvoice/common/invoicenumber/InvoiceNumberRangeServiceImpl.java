@@ -53,7 +53,7 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
     @Override
     public InvoiceNumberRange getCurrentInvoiceNumberRange(String ubn) {
-        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, createRangeIdentifier());
+        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, getCurrentRangeIdentifier());
     }
 
     @Override
@@ -106,7 +106,8 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
         return locks.computeIfAbsent(ubn, s -> new ReentrantLock());
     }
 
-    private String createRangeIdentifier() {
+    @Override
+    public String getCurrentRangeIdentifier() {
 
         StringBuilder rangeIdentifier = new StringBuilder();
         rangeIdentifier.append(MinguoDate.now().get(ChronoField.YEAR));

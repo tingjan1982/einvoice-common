@@ -50,6 +50,12 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
         return invoiceNumberRangeRepository.findById(id).orElseThrow();
     }
 
+
+    @Override
+    public InvoiceNumberRange getCurrentInvoiceNumberRange(String ubn) {
+        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, createRangeIdentifier());
+    }
+
     @Override
     public InvoiceNumberRange getInvoiceNumberRangeByRangeIdentifier(String ubn, String rangeIdentifier) {
         return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, rangeIdentifier);
@@ -66,7 +72,7 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
         try {
             lock.lock();
-            final InvoiceNumberRange invoiceNumberRange = invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, createRangeIdentifier());
+            final InvoiceNumberRange invoiceNumberRange = this.getCurrentInvoiceNumberRange(ubn);
             final InvoiceNumberRange.NumberRange dispensableNumberRange = invoiceNumberRange.findDispensableNumberRange();
 
             final Update updateOperation = new Update().inc("numberRanges.$.currentIncrement", 1);

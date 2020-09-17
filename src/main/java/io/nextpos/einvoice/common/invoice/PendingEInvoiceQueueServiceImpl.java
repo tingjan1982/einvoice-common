@@ -7,10 +7,12 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional("mongoTx")
 public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueService {
 
     private final PendingEInvoiceQueueRepository pendingEInvoiceQueueRepository;

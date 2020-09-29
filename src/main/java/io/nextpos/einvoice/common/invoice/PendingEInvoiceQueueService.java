@@ -6,9 +6,11 @@ public interface PendingEInvoiceQueueService {
 
     PendingEInvoiceQueue savePendingEInvoiceQueue(ElectronicInvoice electronicInvoice);
 
+    PendingEInvoiceQueue updatePendingEInvoiceQueue(PendingEInvoiceQueue pendingEInvoiceQueue);
+
     List<PendingEInvoiceQueue> findPendingEInvoicesByUbn(String ubn);
 
     List<PendingEInvoiceQueue> findPendingEInvoicesByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
 
-    PendingInvoiceStats generatePendingEInvoiceStats();
+    List<PendingInvoiceStats> generatePendingEInvoiceStats();
 }

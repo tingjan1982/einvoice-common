@@ -255,25 +255,19 @@ public class ElectronicInvoice extends MongoBaseObject {
         CREATED,
 
         /**
-         * Issued to customer.
-         */
-        ISSUED,
-
-        /**
          * MIG file created and copied to upload directory.
          */
         MIG_CREATED,
 
         /**
-         * MIG is uploaded via Turnkey.
+         * Electronic invoice is processed successfully.
          */
-        UPLOADED,
+        PROCESSED,
 
-        SUCCESS,
-
-        ERROR,
-
-        FAIL
+        /**
+         * Electronic invoice is void.
+         */
+        VOID
     }
 
     /**

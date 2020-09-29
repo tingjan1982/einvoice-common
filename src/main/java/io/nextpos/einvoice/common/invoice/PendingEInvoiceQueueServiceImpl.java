@@ -28,11 +28,14 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     @Override
     public PendingEInvoiceQueue savePendingEInvoiceQueue(ElectronicInvoice electronicInvoice) {
 
-        PendingEInvoiceQueue pendingEInvoice = new PendingEInvoiceQueue(electronicInvoice.getId(),
-                electronicInvoice.getInvoiceNumber(),
-                electronicInvoice.getSellerUbn());
+        PendingEInvoiceQueue pendingEInvoice = new PendingEInvoiceQueue(electronicInvoice);
 
         return pendingEInvoiceQueueRepository.save(pendingEInvoice);
+    }
+
+    @Override
+    public PendingEInvoiceQueue updatePendingEInvoiceQueue(PendingEInvoiceQueue pendingEInvoiceQueue) {
+        return pendingEInvoiceQueueRepository.save(pendingEInvoiceQueue);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
-    public PendingInvoiceStats generatePendingEInvoiceStats() {
+    public List<PendingInvoiceStats> generatePendingEInvoiceStats() {
 
         final GroupOperation groupBy = Aggregation.group("ubn", "status")
                 .count().as("invoiceCount");
@@ -55,6 +58,6 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
 
         final AggregationResults<PendingInvoiceStats> result = mongoTemplate.aggregate(aggregation, PendingInvoiceStats.class);
 
-        return result.getUniqueMappedResult();
+        return result.getMappedResults();
     }
 }

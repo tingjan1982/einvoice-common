@@ -54,12 +54,12 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
     public enum PendingEInvoiceStatus {
 
         /**
-         * Initial state
+         * Initial state - ready to be processed.
          */
         PENDING,
 
         /**
-         * Processed by processor to Turnkey working directory.
+         * MIG is copied to Turnkey working directory.
          */
         PROCESSED,
 
@@ -74,7 +74,7 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
         CONFIRMED,
 
         /**
-         * Something went wrong.
+         * Error returned from big platform.
          */
         ERROR
     }

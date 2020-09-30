@@ -12,5 +12,7 @@ public interface PendingEInvoiceQueueService {
 
     List<PendingEInvoiceQueue> findPendingEInvoicesByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
 
+    void deleteByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
+
     List<PendingInvoiceStats> generatePendingEInvoiceStats();
 }

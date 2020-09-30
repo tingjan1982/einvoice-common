@@ -49,6 +49,11 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
+    public void deleteByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status) {
+        pendingEInvoiceQueueRepository.deleteAllByStatus(status);
+    }
+
+    @Override
     public List<PendingInvoiceStats> generatePendingEInvoiceStats() {
 
         final GroupOperation groupBy = Aggregation.group("ubn", "status")

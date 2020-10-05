@@ -13,15 +13,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class PendingEInvoiceQueue extends MongoBaseObject {
 
-    /**
-     * Same as ElectronicInvoice.id.
-     */
     @Id
     private String id;
 
     private String invoiceNumber;
 
     private String ubn;
+
+    private PendingEInvoiceType invoiceType;
 
     /**
      * This is used to search turnkey database to find e-invoice processing result.
@@ -33,12 +32,12 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
     @DBRef
     private ElectronicInvoice electronicInvoice;
 
-    public PendingEInvoiceQueue(ElectronicInvoice electronicInvoice) {
-        this.id = electronicInvoice.getId();
+    public PendingEInvoiceQueue(ElectronicInvoice electronicInvoice, PendingEInvoiceType pendingEInvoiceType) {
         this.invoiceNumber = electronicInvoice.getInvoiceNumber();
         this.ubn = electronicInvoice.getSellerUbn();
         this.electronicInvoice = electronicInvoice;
 
+        this.invoiceType = pendingEInvoiceType;
         this.status = PendingEInvoiceStatus.PENDING;
     }
 
@@ -49,6 +48,19 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
     @Override
     public boolean isNew() {
         return id == null;
+    }
+
+    public enum PendingEInvoiceType {
+
+        /**
+         * New invoice (C0401)
+         */
+        CREATE,
+
+        /**
+         * Void invoice (C0501)
+         */
+        VOID
     }
 
     public enum PendingEInvoiceStatus {

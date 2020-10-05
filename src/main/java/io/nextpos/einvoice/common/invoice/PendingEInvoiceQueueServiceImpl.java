@@ -1,5 +1,7 @@
 package io.nextpos.einvoice.common.invoice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -15,6 +17,8 @@ import java.util.List;
 @Transactional("mongoTx")
 public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PendingEInvoiceQueueServiceImpl.class);
+
     private final PendingEInvoiceQueueRepository pendingEInvoiceQueueRepository;
 
     private final MongoTemplate mongoTemplate;
@@ -26,11 +30,14 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
-    public PendingEInvoiceQueue savePendingEInvoiceQueue(ElectronicInvoice electronicInvoice) {
+    public PendingEInvoiceQueue createPendingEInvoiceQueue(ElectronicInvoice electronicInvoice, PendingEInvoiceQueue.PendingEInvoiceType pendingEInvoiceType) {
 
-        PendingEInvoiceQueue pendingEInvoice = new PendingEInvoiceQueue(electronicInvoice);
+        PendingEInvoiceQueue pendingEInvoice = new PendingEInvoiceQueue(electronicInvoice, pendingEInvoiceType);
+        pendingEInvoiceQueueRepository.save(pendingEInvoice);
 
-        return pendingEInvoiceQueueRepository.save(pendingEInvoice);
+        LOGGER.info("Created pending e-invoice[type={}]: {}", pendingEInvoiceType, pendingEInvoice.getId());
+
+        return pendingEInvoice;
     }
 
     @Override

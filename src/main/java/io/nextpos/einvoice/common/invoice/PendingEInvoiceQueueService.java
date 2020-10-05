@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface PendingEInvoiceQueueService {
 
-    PendingEInvoiceQueue savePendingEInvoiceQueue(ElectronicInvoice electronicInvoice);
+    PendingEInvoiceQueue createPendingEInvoiceQueue(ElectronicInvoice electronicInvoice, PendingEInvoiceQueue.PendingEInvoiceType pendingEInvoiceType);
 
     PendingEInvoiceQueue updatePendingEInvoiceQueue(PendingEInvoiceQueue pendingEInvoiceQueue);
 

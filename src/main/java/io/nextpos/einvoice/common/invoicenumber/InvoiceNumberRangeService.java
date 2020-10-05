@@ -14,6 +14,8 @@ public interface InvoiceNumberRangeService {
 
     List<InvoiceNumberRange> getInvoiceNumberRanges(String ubn);
 
+    void deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom);
+
     String resolveInvoiceNumber(String ubn);
 
     String getCurrentRangeIdentifier();

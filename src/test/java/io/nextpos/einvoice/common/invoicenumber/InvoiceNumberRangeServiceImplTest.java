@@ -2,12 +2,12 @@ package io.nextpos.einvoice.common.invoicenumber;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,9 +66,11 @@ class InvoiceNumberRangeServiceImplTest {
 
         assertThat(newInvoiceNumbers).hasSize(10);
         assertThat(newInvoiceNumbers).allSatisfy(n -> assertThat(n.length()).isEqualTo(11));
+        assertThat(updatedInvoiceNumberRange.getNumberRanges()).allSatisfy(nr -> assertThat(nr.isStarted()).isTrue());
         assertThat(updatedInvoiceNumberRange.getNumberRanges()).allSatisfy(nr -> assertThat(nr.isFinished()).isTrue());
 
         assertThatThrownBy(updatedInvoiceNumberRange::findDispensableNumberRange).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
     }
 }

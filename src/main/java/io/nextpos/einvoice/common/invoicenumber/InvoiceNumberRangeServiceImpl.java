@@ -67,6 +67,15 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     }
 
     @Override
+    public void deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom) {
+
+        final InvoiceNumberRange invoiceNumberRange = this.getInvoiceNumberRangeByRangeIdentifier(ubn, rangeIdentifier);
+        invoiceNumberRange.deleteNumberRangeById(rangeFrom);
+
+        invoiceNumberRangeRepository.save(invoiceNumberRange);
+    }
+
+    @Override
     public String resolveInvoiceNumber(String ubn) {
         Lock lock = acquireLock(ubn);
 
@@ -76,6 +85,10 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
             final InvoiceNumberRange.NumberRange dispensableNumberRange = invoiceNumberRange.findDispensableNumberRange();
 
             final Update updateOperation = new Update().inc("numberRanges.$.currentIncrement", 1);
+
+            if (!dispensableNumberRange.isStarted()) {
+                updateOperation.set("numberRanges.$.started", true);
+            }
 
             if (dispensableNumberRange.isLastNumberInRange()) {
                 updateOperation.set("numberRanges.$.finished", true);

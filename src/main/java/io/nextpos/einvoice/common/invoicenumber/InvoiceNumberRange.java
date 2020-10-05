@@ -1,7 +1,6 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -34,10 +33,11 @@ public class InvoiceNumberRange {
         this.ubn = ubn;
         this.rangeIdentifier = rangeIdentifier;
 
-        numberRanges.add(new NumberRange(prefix, rangeFrom, rangeTo));
+        this.addNumberRange(prefix, rangeFrom, rangeTo);
     }
 
     public void addNumberRange(String prefix, String rangeFrom, String rangeTo) {
+
         final NumberRange numberRange = new NumberRange(prefix, rangeFrom, rangeTo);
         numberRanges.add(numberRange);
     }
@@ -48,6 +48,16 @@ public class InvoiceNumberRange {
                 .findFirst().orElseThrow(() -> {
                     throw new RuntimeException("There is no dispensable number range");
                 });
+    }
+
+    public void deleteNumberRangeById(String id) {
+        final NumberRange numberRange = this.findNumberRangeById(id);
+
+        if (numberRange.isStarted()) {
+            throw new RuntimeException("Started number range cannot be deleted");
+        }
+
+        numberRanges.removeIf(nr -> nr.getRangeFrom().equals(id));
     }
 
     public NumberRange findNumberRangeById(String id) {
@@ -72,6 +82,8 @@ public class InvoiceNumberRange {
 
         private int currentIncrement;
 
+        private boolean started;
+
         /**
          * indicate if all numbers have been issued.
          */
@@ -82,6 +94,10 @@ public class InvoiceNumberRange {
             this.rangeFrom = rangeFrom;
             this.rangeTo = rangeTo;
             this.currentIncrement = Integer.parseInt(rangeFrom) - 1;
+        }
+
+        public int getRemainingNumberInRange() {
+            return Integer.parseInt(rangeTo) - currentIncrement;
         }
 
         public boolean isLastNumberInRange() {

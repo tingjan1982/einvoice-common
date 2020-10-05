@@ -31,6 +31,15 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.11'
     compileOnly 'org.projectlombok:lombok'
 
+    // encryption specific dependencies
+    implementation files('lib/geinv-kms-core-1.0.4.jar')
+    implementation files('lib/geinv-kms-dist-1.0.1.jar')
+    implementation files('lib/tv-commons-1.0.4.jar')
+    implementation files('lib/tv-logging-core-1.0.3.jar')
+    implementation files('lib/tv-config-1.0.2.jar')
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'commons-configuration:commons-configuration:1.10'
+
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 

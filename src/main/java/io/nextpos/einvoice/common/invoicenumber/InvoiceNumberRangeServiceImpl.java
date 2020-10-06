@@ -76,7 +76,7 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
         int monthToSubtract = YearMonth.now().getMonthValue() % 2 == 0 ? 2 : 1;
         final String lastRangeIdentifier = getRangeIdentifier(YearMonth.now().minusMonths(monthToSubtract));
 
-        return invoiceNumberRangeRepository.findAllByRangeIdentifier(lastRangeIdentifier);
+        return invoiceNumberRangeRepository.findAllByRangeIdentifierAndStatus(lastRangeIdentifier, InvoiceNumberRange.InvoiceNumberRangeStatus.ACTIVE);
     }
 
     @Override

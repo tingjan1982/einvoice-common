@@ -11,5 +11,5 @@ public interface InvoiceNumberRangeRepository extends MongoRepository<InvoiceNum
 
     List<InvoiceNumberRange> findAllByUbnOrderByRangeIdentifier(String ubn);
 
-    List<InvoiceNumberRange> findAllByRangeIdentifier(String rangeIdentifier);
+    List<InvoiceNumberRange> findAllByRangeIdentifierAndStatus(String rangeIdentifier, InvoiceNumberRange.InvoiceNumberRangeStatus status);
 }

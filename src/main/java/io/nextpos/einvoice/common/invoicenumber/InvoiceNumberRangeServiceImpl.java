@@ -53,17 +53,30 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
     @Override
     public InvoiceNumberRange getCurrentInvoiceNumberRange(String ubn) {
-        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, getCurrentRangeIdentifier());
+        return this.getInvoiceNumberRangeByRangeIdentifier(ubn, getCurrentRangeIdentifier());
     }
 
     @Override
     public InvoiceNumberRange getInvoiceNumberRangeByRangeIdentifier(String ubn, String rangeIdentifier) {
-        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, rangeIdentifier);
+
+        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, rangeIdentifier).orElseThrow(() -> {
+            final String message = String.format("Invoice number range cannot be found: ubn=%s, rangeIdentifier=%s", ubn, rangeIdentifier);
+            throw new RuntimeException(message);
+        });
     }
 
     @Override
     public List<InvoiceNumberRange> getInvoiceNumberRanges(String ubn) {
         return invoiceNumberRangeRepository.findAllByUbnOrderByRangeIdentifier(ubn);
+    }
+
+    @Override
+    public List<InvoiceNumberRange> getInvoiceNumberRangesByLastRangeIdentifier() {
+
+        int monthToSubtract = YearMonth.now().getMonthValue() % 2 == 0 ? 2 : 1;
+        final String lastRangeIdentifier = getRangeIdentifier(YearMonth.now().minusMonths(monthToSubtract));
+
+        return invoiceNumberRangeRepository.findAllByRangeIdentifier(lastRangeIdentifier);
     }
 
     @Override
@@ -121,15 +134,19 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
     @Override
     public String getCurrentRangeIdentifier() {
+        return getRangeIdentifier(YearMonth.now());
+    }
+
+    @Override
+    public String getRangeIdentifier(YearMonth yearMonth) {
 
         StringBuilder rangeIdentifier = new StringBuilder();
         rangeIdentifier.append(MinguoDate.now().get(ChronoField.YEAR));
 
-        final YearMonth thisMonth = YearMonth.now();
-        if (thisMonth.getMonthValue() % 2 == 0) {
-            rangeIdentifier.append(thisMonth.minusMonths(1).format(FORMATTER)).append(thisMonth.format(FORMATTER));
+        if (yearMonth.getMonthValue() % 2 == 0) {
+            rangeIdentifier.append(yearMonth.minusMonths(1).format(FORMATTER)).append(yearMonth.format(FORMATTER));
         } else {
-            rangeIdentifier.append(thisMonth.format(FORMATTER)).append(thisMonth.plusMonths(1).format(FORMATTER));
+            rangeIdentifier.append(yearMonth.format(FORMATTER)).append(yearMonth.plusMonths(1).format(FORMATTER));
         }
 
         return rangeIdentifier.toString();

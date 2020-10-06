@@ -1,5 +1,6 @@
 package io.nextpos.einvoice.common.invoice;
 
+import io.nextpos.einvoice.common.shared.EInvoiceBaseObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,7 +38,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class ElectronicInvoice extends MongoBaseObject {
+public class ElectronicInvoice extends EInvoiceBaseObject {
 
     @Id
     private String id;
@@ -178,11 +179,6 @@ public class ElectronicInvoice extends MongoBaseObject {
         }
 
         this.qrCode2Content = qrCodeContent.toString();
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
     }
 
     @Data

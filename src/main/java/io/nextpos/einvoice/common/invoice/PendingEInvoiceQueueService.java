@@ -10,7 +10,7 @@ public interface PendingEInvoiceQueueService {
 
     List<PendingEInvoiceQueue> findPendingEInvoicesByUbn(String ubn);
 
-    List<PendingEInvoiceQueue> findPendingEInvoicesByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
+    List<PendingEInvoiceQueue> findPendingEInvoicesByStatuses(PendingEInvoiceQueue.PendingEInvoiceStatus... status);
 
     void deleteByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
 

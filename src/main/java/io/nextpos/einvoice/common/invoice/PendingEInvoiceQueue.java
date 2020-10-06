@@ -1,5 +1,6 @@
 package io.nextpos.einvoice.common.invoice;
 
+import io.nextpos.einvoice.common.shared.EInvoiceBaseObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class PendingEInvoiceQueue extends MongoBaseObject {
+public class PendingEInvoiceQueue extends EInvoiceBaseObject {
 
     @Id
     private String id;
@@ -21,11 +22,6 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
     private String ubn;
 
     private PendingEInvoiceType invoiceType;
-
-    /**
-     * This is used to search turnkey database to find e-invoice processing result.
-     */
-    private String invoiceIdentifier;
 
     private PendingEInvoiceStatus status;
 
@@ -43,11 +39,6 @@ public class PendingEInvoiceQueue extends MongoBaseObject {
 
     public void markAsProcessed() {
         status = PendingEInvoiceStatus.PROCESSED;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
     }
 
     public enum PendingEInvoiceType {

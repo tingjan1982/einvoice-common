@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -51,8 +52,8 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
-    public List<PendingEInvoiceQueue> findPendingEInvoicesByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status) {
-        return pendingEInvoiceQueueRepository.findAllByStatus(status);
+    public List<PendingEInvoiceQueue> findPendingEInvoicesByStatuses(PendingEInvoiceQueue.PendingEInvoiceStatus... status) {
+        return pendingEInvoiceQueueRepository.findAllByStatusIn(Arrays.asList(status));
     }
 
     @Override

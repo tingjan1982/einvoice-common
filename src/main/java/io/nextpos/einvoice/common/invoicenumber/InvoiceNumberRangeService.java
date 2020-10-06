@@ -1,5 +1,6 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
+import java.time.YearMonth;
 import java.util.List;
 
 public interface InvoiceNumberRangeService {
@@ -14,9 +15,13 @@ public interface InvoiceNumberRangeService {
 
     List<InvoiceNumberRange> getInvoiceNumberRanges(String ubn);
 
+    List<InvoiceNumberRange> getInvoiceNumberRangesByLastRangeIdentifier();
+
     void deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom);
 
     String resolveInvoiceNumber(String ubn);
 
     String getCurrentRangeIdentifier();
+
+    String getRangeIdentifier(YearMonth yearMonth);
 }

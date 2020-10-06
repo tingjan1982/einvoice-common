@@ -1,4 +1,4 @@
-package io.nextpos.einvoice.common.invoice;
+package io.nextpos.einvoice.common.shared;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +10,7 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Data
-public abstract class MongoBaseObject implements Persistable<String> {
+public abstract class EInvoiceBaseObject implements Persistable<String> {
 
     /**
      * https://stackoverflow.com/questions/25333711/what-is-the-use-of-the-temporal-annotation-in-hibernate
@@ -22,4 +22,14 @@ public abstract class MongoBaseObject implements Persistable<String> {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date modifiedDate;
+
+    /**
+     * This is used to search turnkey database to find e-invoice processing result.
+     */
+    private String invoiceIdentifier;
+
+    @Override
+    public boolean isNew() {
+        return getId() == null;
+    }
 }

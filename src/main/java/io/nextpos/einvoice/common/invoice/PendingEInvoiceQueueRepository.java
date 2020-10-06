@@ -8,7 +8,7 @@ public interface PendingEInvoiceQueueRepository extends MongoRepository<PendingE
 
     List<PendingEInvoiceQueue> findAllByUbnAndStatus(String ubn, PendingEInvoiceQueue.PendingEInvoiceStatus status);
 
-    List<PendingEInvoiceQueue> findAllByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
+    List<PendingEInvoiceQueue> findAllByStatusIn(List<PendingEInvoiceQueue.PendingEInvoiceStatus> status);
 
     void deleteAllByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
 }

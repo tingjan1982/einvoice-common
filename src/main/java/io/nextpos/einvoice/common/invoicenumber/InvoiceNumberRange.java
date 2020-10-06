@@ -1,21 +1,26 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
+import io.nextpos.einvoice.common.shared.EInvoiceBaseObject;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.number.NumberStyleFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Document
 @CompoundIndexes({@CompoundIndex(name = "unique_ubn_range_identifier_index", def = "{'ubn': 1, 'rangeIdentifier': 1}", unique = true)})
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class InvoiceNumberRange {
+public class InvoiceNumberRange extends EInvoiceBaseObject {
 
     @Id
     private String id;
@@ -27,13 +32,20 @@ public class InvoiceNumberRange {
      */
     private String rangeIdentifier;
 
+    private InvoiceNumberRangeStatus status;
+
     private List<NumberRange> numberRanges = new ArrayList<>();
 
     public InvoiceNumberRange(String ubn, String rangeIdentifier, String prefix, String rangeFrom, String rangeTo) {
         this.ubn = ubn;
         this.rangeIdentifier = rangeIdentifier;
+        this.status = InvoiceNumberRangeStatus.ACTIVE;
 
         this.addNumberRange(prefix, rangeFrom, rangeTo);
+    }
+
+    public String getShortRangeIdentifier() {
+        return rangeIdentifier.substring(0, 3) + rangeIdentifier.substring(5);
     }
 
     public void addNumberRange(String prefix, String rangeFrom, String rangeTo) {
@@ -100,8 +112,26 @@ public class InvoiceNumberRange {
             return Integer.parseInt(rangeTo) - currentIncrement;
         }
 
+        public String getNextIncrement() {
+            NumberStyleFormatter formatter = new NumberStyleFormatter("00000000");
+            return formatter.getNumberFormat(Locale.getDefault()).format(currentIncrement + 1);
+        }
+
         public boolean isLastNumberInRange() {
             return currentIncrement + 1 == Integer.parseInt(rangeTo);
         }
+    }
+
+    public enum InvoiceNumberRangeStatus {
+
+        /**
+         * In use
+         */
+        ACTIVE,
+
+        /**
+         * Unused number ranges are uploaded to big platform.
+         */
+        FINISHED
     }
 }

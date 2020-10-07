@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'io.nextpos.einvoice'
-version '1.1-SNAPSHOT'
+version '1.2-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -18,6 +18,14 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+/**
+ * https://docs.gradle.org/current/userguide/declaring_dependencies.html
+ */
+configurations {
+    extraLibs
+    implementation.extendsFrom extraLibs
 }
 
 dependencies {
@@ -32,11 +40,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
 
     // encryption specific dependencies
-    implementation files('lib/geinv-kms-core-1.0.4.jar')
-    implementation files('lib/geinv-kms-dist-1.0.1.jar')
-    implementation files('lib/tv-commons-1.0.4.jar')
-    implementation files('lib/tv-logging-core-1.0.3.jar')
-    implementation files('lib/tv-config-1.0.2.jar')
+    extraLibs files('lib/geinv-kms-core-1.0.4.jar')
+    extraLibs files('lib/geinv-kms-dist-1.0.1.jar')
+    extraLibs files('lib/tv-commons-1.0.4.jar')
+    extraLibs files('lib/tv-logging-core-1.0.3.jar')
+    extraLibs files('lib/tv-config-1.0.2.jar')
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'commons-configuration:commons-configuration:1.10'
 
@@ -57,6 +65,10 @@ bootJar {
 
 jar {
     enabled = true
+    // https://discuss.gradle.org/t/how-to-include-dependencies-in-jar/19571
+    from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 test {
@@ -74,7 +86,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = 'io.nextpos.einvoice'
             artifactId = 'einvoice-common'
-            version = '1.1-SNAPSHOT'
+            version = '1.2-SNAPSHOT'
             from components.java
 
             versionMapping {

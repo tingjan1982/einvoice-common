@@ -9,6 +9,8 @@ public interface InvoiceNumberRangeService {
 
     InvoiceNumberRange getInvoiceNumberRange(String id);
 
+    boolean hasCurrentInvoiceNumberRange(String ubn);
+
     InvoiceNumberRange getCurrentInvoiceNumberRange(String ubn);
 
     InvoiceNumberRange getInvoiceNumberRangeByRangeIdentifier(String ubn, String rangeIdentifier);

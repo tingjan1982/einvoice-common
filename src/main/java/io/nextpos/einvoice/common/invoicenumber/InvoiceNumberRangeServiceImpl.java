@@ -52,6 +52,11 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
 
     @Override
+    public boolean hasCurrentInvoiceNumberRange(String ubn) {
+        return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, getCurrentRangeIdentifier()).isPresent();
+    }
+
+    @Override
     public InvoiceNumberRange getCurrentInvoiceNumberRange(String ubn) {
         return this.getInvoiceNumberRangeByRangeIdentifier(ubn, getCurrentRangeIdentifier());
     }

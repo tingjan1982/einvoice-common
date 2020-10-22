@@ -134,7 +134,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
         qrCodeContent.append(invoiceItems.size()).append(":");
         qrCodeContent.append(invoiceItems.size()).append(":");
-        qrCodeContent.append("1:"); // UTF-8 encoding
+        qrCodeContent.append("1:"); // 0 Big-5, 1 UTF-8, 2 Base64
 
         final int splitIndex = invoiceItems.size() / 2;
 

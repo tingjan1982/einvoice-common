@@ -76,6 +76,10 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private String buyerUbn;
 
+    private String carrierId;
+
+    private String carrierId2;
+
     private String barcodeContent;
 
     private String qrCode1Content;

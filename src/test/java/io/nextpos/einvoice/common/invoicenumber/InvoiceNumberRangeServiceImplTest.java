@@ -34,6 +34,7 @@ class InvoiceNumberRangeServiceImplTest {
         invoiceNumberRangeService.saveInvoiceNumberRange(invoiceNumberRange);
 
         assertThat(invoiceNumberRange.getId()).isNotNull();
+        assertThat(invoiceNumberRange.getStatus()).isEqualByComparingTo(InvoiceNumberRange.InvoiceNumberRangeStatus.ACTIVE);
         assertThat(invoiceNumberRange.getNumberRanges()).hasSize(2);
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -62,15 +63,20 @@ class InvoiceNumberRangeServiceImplTest {
         assertThat(invoiceNumberRangeService.resolveInvoiceNumber(ubn)).contains("GG");
         assertThat(invoiceNumberRangeService.resolveInvoiceNumber(ubn)).contains("GG");
 
-        final InvoiceNumberRange updatedInvoiceNumberRange = invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId());
-
         assertThat(newInvoiceNumbers).hasSize(10);
         assertThat(newInvoiceNumbers).allSatisfy(n -> assertThat(n.length()).isEqualTo(11));
+
+        final InvoiceNumberRange updatedInvoiceNumberRange = invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId());
+
         assertThat(updatedInvoiceNumberRange.getNumberRanges()).allSatisfy(nr -> assertThat(nr.isStarted()).isTrue());
         assertThat(updatedInvoiceNumberRange.getNumberRanges()).allSatisfy(nr -> assertThat(nr.isFinished()).isTrue());
 
         assertThatThrownBy(updatedInvoiceNumberRange::findDispensableNumberRange).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
+
+        invoiceNumberRangeService.deleteInvoiceNumberRange(ubn, invoiceNumberRange.getRangeIdentifier());
+
+        assertThatThrownBy(() -> invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId())).isInstanceOf(RuntimeException.class);
     }
 }

@@ -49,7 +49,12 @@ public class PendingEInvoiceQueue extends EInvoiceBaseObject {
         CREATE,
 
         /**
-         * Void invoice (C0501)
+         * Cancel invoice (C0501)
+         */
+        CANCEL,
+
+        /**
+         * Void invoice (C0701)
          */
         VOID
     }

@@ -94,6 +94,14 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     }
 
     @Override
+    public void deleteInvoiceNumberRange(String ubn, String rangeIdentifier) {
+
+        final InvoiceNumberRange invoiceNumberRange = this.getInvoiceNumberRangeByRangeIdentifier(ubn, rangeIdentifier);
+
+        invoiceNumberRangeRepository.delete(invoiceNumberRange);
+    }
+
+    @Override
     public String resolveInvoiceNumber(String ubn) {
         Lock lock = acquireLock(ubn);
 

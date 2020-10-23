@@ -265,6 +265,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         PROCESSED,
 
         /**
+         * Electronic invoice is cancelled.
+         */
+        CANCELLED,
+
+        /**
          * Electronic invoice is void.
          */
         VOID

@@ -6,8 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: amazoncorretto:11
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -38,6 +37,6 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests!
-      - run: gradle test
+      # build and publish
+      - run: ./gradlew clean build -x test publish
 

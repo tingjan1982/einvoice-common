@@ -88,11 +88,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private List<InvoiceItem> invoiceItems = new ArrayList<>();
 
-    public ElectronicInvoice(String orderId, String invoiceNumber, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, List<InvoiceItem> invoiceItems) {
+    public ElectronicInvoice(String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, List<InvoiceItem> invoiceItems) {
         this.orderId = orderId;
         this.invoiceNumber = invoiceNumber;
         this.internalInvoiceNumber = invoiceNumber.replace("-", "");
-        this.invoiceStatus = InvoiceStatus.CREATED;
+        this.invoiceStatus = invoiceStatus;
         this.invoicePeriod = invoicePeriod;
         this.randomNumber = RandomStringUtils.randomNumeric(4);
         this.invoiceCreatedDate = new Date();
@@ -253,6 +253,8 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
          * Initial state.
          */
         CREATED,
+
+        INVOICE_NUMBER_MISSING,
 
         /**
          * MIG file created and copied to upload directory.

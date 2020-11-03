@@ -28,7 +28,8 @@ class InvoiceNumberRangeServiceImplTest {
     void manageInvoiceNumberRange() throws Exception {
 
         String ubn = "83515813";
-        InvoiceNumberRange invoiceNumberRange = new InvoiceNumberRange(ubn, "1090910", "AW", "00002350", "00002359");
+        final String currentRangeIdentifier = invoiceNumberRangeService.getCurrentRangeIdentifier();
+        InvoiceNumberRange invoiceNumberRange = new InvoiceNumberRange(ubn, currentRangeIdentifier, "AW", "00002350", "00002359");
         invoiceNumberRange.addNumberRange("GG", "10009000", "10009001");
 
         invoiceNumberRangeService.saveInvoiceNumberRange(invoiceNumberRange);
@@ -74,6 +75,8 @@ class InvoiceNumberRangeServiceImplTest {
         assertThatThrownBy(updatedInvoiceNumberRange::findDispensableNumberRange).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> invoiceNumberRangeService.resolveInvoiceNumber(ubn)).isInstanceOf(RuntimeException.class);
+
+        assertThat(updatedInvoiceNumberRange.findAvailableNumberRange()).isNotNull();
 
         invoiceNumberRangeService.deleteInvoiceNumberRange(ubn, invoiceNumberRange.getRangeIdentifier());
 

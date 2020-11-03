@@ -62,6 +62,12 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
                 });
     }
 
+    public NumberRange findAvailableNumberRange() {
+        return numberRanges.stream()
+                .filter(r -> !r.isFinished())
+                .findFirst().orElseGet(() -> numberRanges.get(numberRanges.size() - 1));
+    }
+
     public void deleteNumberRangeById(String id) {
         final NumberRange numberRange = this.findNumberRangeById(id);
 

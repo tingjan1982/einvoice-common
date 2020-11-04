@@ -74,12 +74,6 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private String sellerName;
 
-    private String buyerUbn;
-
-    private String carrierId;
-
-    private String carrierId2;
-
     private String barcodeContent;
 
     private String qrCode1Content;
@@ -87,6 +81,21 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     private String qrCode2Content;
 
     private List<InvoiceItem> invoiceItems = new ArrayList<>();
+
+    /**
+     * The following fields are optional
+     */
+    private String buyerUbn;
+
+    private CarrierType carrierType;
+
+    private String carrierId;
+
+    private String carrierId2;
+
+    private String npoBan;
+
+    private boolean printMark;
 
     public ElectronicInvoice(String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, List<InvoiceItem> invoiceItems) {
         this.orderId = orderId;
@@ -183,6 +192,10 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         }
 
         this.qrCode2Content = qrCodeContent.toString();
+    }
+
+    public enum CarrierType {
+        MOBILE, CITIZEN_CERTIFICATE
     }
 
     @Data

@@ -73,6 +73,8 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     private String sellerUbn;
 
     private String sellerName;
+    
+    private String sellerAddress;
 
     private String barcodeContent;
 
@@ -97,7 +99,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private boolean printMark;
 
-    public ElectronicInvoice(String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, List<InvoiceItem> invoiceItems) {
+    public ElectronicInvoice(String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, String sellerAddress, List<InvoiceItem> invoiceItems) {
         this.orderId = orderId;
         this.invoiceNumber = invoiceNumber;
         this.internalInvoiceNumber = invoiceNumber.replace("-", "");
@@ -109,6 +111,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         this.taxAmount = taxAmount.setScale(0, RoundingMode.UP);
         this.sellerUbn = sellerUbn;
         this.sellerName = sellerName;
+        this.sellerAddress = sellerAddress;
         this.invoiceItems = invoiceItems;
     }
 

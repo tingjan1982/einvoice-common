@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -113,6 +114,13 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         this.sellerName = sellerName;
         this.sellerAddress = sellerAddress;
         this.invoiceItems = invoiceItems;
+    }
+
+    public boolean canPrintElectronicInvoice() {
+        boolean buyerUbnWithPrintMark = carrierType != null && StringUtils.isNotBlank(buyerUbn) && printMark;
+        boolean notCarrierAndDonation = carrierType == null && StringUtils.isBlank(npoBan);
+
+        return buyerUbnWithPrintMark || notCarrierAndDonation;
     }
 
     public BigDecimal getSalesAmountWithoutTax() {

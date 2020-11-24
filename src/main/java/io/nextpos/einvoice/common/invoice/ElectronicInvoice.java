@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.chrono.ChronoZonedDateTime;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -145,9 +147,13 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private void generateQrCode1Content(InvoiceQRCodeEncryptor invoiceQRCodeEncryptor) {
 
+        final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyMMdd")
+                .withChronology(MinguoChronology.INSTANCE)
+                .withZone(ZoneId.of("Asia/Taipei"));
+
         final StringBuilder qrCodeContent = new StringBuilder();
         qrCodeContent.append(internalInvoiceNumber);
-        qrCodeContent.append(invoicePeriod.formatLongInvoicePeriod());
+        qrCodeContent.append(df.format(invoiceCreatedDate.toInstant()));
         qrCodeContent.append(randomNumber);
         qrCodeContent.append(toEightDigitHexadecimal(getSalesAmountWithoutTax()));
         qrCodeContent.append(toEightDigitHexadecimal(salesAmount));
@@ -158,16 +164,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
         qrCodeContent.append(invoiceItems.size()).append(":");
         qrCodeContent.append(invoiceItems.size()).append(":");
-        qrCodeContent.append("1:"); // 0 Big-5, 1 UTF-8, 2 Base64
-
-        final int splitIndex = invoiceItems.size() / 2;
-
-        for (int i = 0; i < splitIndex; i++) {
-            final InvoiceItem invoiceItem = invoiceItems.get(i);
-            qrCodeContent.append(invoiceItem.getProductName()).append(":")
-                    .append(invoiceItem.getQuantity()).append(":")
-                    .append(invoiceItem.getSubTotal());
-        }
+        qrCodeContent.append("2:"); // 0 Big-5, 1 UTF-8, 2 Base64
 
         this.qrCode1Content = qrCodeContent.toString();
     }
@@ -191,18 +188,14 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     private void generateQrCode2Content() {
 
         final StringBuilder qrCodeContent = new StringBuilder();
-        qrCodeContent.append("**");
 
-        final int splitIndex = invoiceItems.size() / 2;
-
-        for (int i = splitIndex; i < invoiceItems.size(); i++) {
-            final InvoiceItem lineItem = invoiceItems.get(i);
+        for (final InvoiceItem lineItem : invoiceItems) {
             qrCodeContent.append(lineItem.getProductName()).append(":")
                     .append(lineItem.getQuantity()).append(":")
-                    .append(lineItem.getSubTotal());
+                    .append(lineItem.getUnitPrice()).append(":");
         }
 
-        this.qrCode2Content = qrCodeContent.toString();
+        this.qrCode2Content = "**" + Base64.getEncoder().encodeToString(qrCodeContent.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     public enum CarrierType {

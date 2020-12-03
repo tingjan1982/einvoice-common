@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.crypto.Cipher;
@@ -51,6 +53,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     /**
      * The official electronic invoice number
      */
+    @Indexed(unique = true)
     private String invoiceNumber;
 
     /**
@@ -76,7 +79,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     private String sellerUbn;
 
     private String sellerName;
-    
+
     private String sellerAddress;
 
     private String barcodeContent;
@@ -110,8 +113,8 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         this.invoicePeriod = invoicePeriod;
         this.randomNumber = RandomStringUtils.randomNumeric(4);
         this.invoiceCreatedDate = new Date();
-        this.salesAmount = salesAmount;
-        this.taxAmount = taxAmount.setScale(0, RoundingMode.UP);
+        this.salesAmount = salesAmount.setScale(0, RoundingMode.HALF_UP);
+        this.taxAmount = taxAmount.setScale(0, RoundingMode.HALF_UP);
         this.sellerUbn = sellerUbn;
         this.sellerName = sellerName;
         this.sellerAddress = sellerAddress;
@@ -164,7 +167,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
         qrCodeContent.append(invoiceItems.size()).append(":");
         qrCodeContent.append(invoiceItems.size()).append(":");
-        qrCodeContent.append("2:"); // 0 Big-5, 1 UTF-8, 2 Base64
+        qrCodeContent.append("2: "); // 0 Big-5, 1 UTF-8, 2 Base64
+
+        if (qrCodeContent.length() < 135) {
+            qrCodeContent.append(" ".repeat(135 - qrCodeContent.length()));
+        }
 
         this.qrCode1Content = qrCodeContent.toString();
     }
@@ -180,7 +187,7 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
         return leftPadding.append(hex).toString();
     }
-    
+
     private String encryptInvoiceNumber(final InvoiceQRCodeEncryptor invoiceQRCodeEncryptor) {
         return invoiceQRCodeEncryptor.encode(internalInvoiceNumber + randomNumber);
     }
@@ -196,6 +203,30 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         }
 
         this.qrCode2Content = "**" + Base64.getEncoder().encodeToString(qrCodeContent.toString().getBytes(StandardCharsets.UTF_8));
+
+        if (this.qrCode2Content.length() < 135) {
+            this.qrCode2Content += " ".repeat(135 - this.qrCode2Content.length());
+        }
+    }
+
+    public String getQrCode1ContentAsHex() {
+        return encodeContentAsHex(qrCode1Content);
+    }
+
+    public String getQrCode2ContentAsHex() {
+        return encodeContentAsHex(qrCode2Content);
+    }
+
+    private String encodeContentAsHex(String content) {
+
+        final StringBuilder command = new StringBuilder("1D286B");
+        final String byteLength1 = String.format("%02X", (content.length() + 3) % 256);
+        final String byteLength2 = String.format("%02X", (content.length() + 3) / 256);
+        command.append(byteLength1).append(byteLength2);
+        command.append("315030");
+        command.append(Hex.encodeHex(content.getBytes(StandardCharsets.UTF_8), false));
+
+        return command.toString();
     }
 
     public enum CarrierType {

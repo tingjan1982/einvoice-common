@@ -48,6 +48,8 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     @Id
     private String id;
 
+    private String clientId;
+
     private String orderId;
 
     /**
@@ -105,10 +107,10 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
     private boolean printMark;
 
-    public ElectronicInvoice(String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, String sellerAddress, List<InvoiceItem> invoiceItems) {
+    public ElectronicInvoice(String clientId, String orderId, String invoiceNumber, InvoiceStatus invoiceStatus, InvoicePeriod invoicePeriod, BigDecimal salesAmount, BigDecimal taxAmount, String sellerUbn, String sellerName, String sellerAddress, List<InvoiceItem> invoiceItems) {
+        this.clientId = clientId;
         this.orderId = orderId;
-        this.invoiceNumber = invoiceNumber;
-        this.internalInvoiceNumber = invoiceNumber.replace("-", "");
+        this.updateInvoiceNumber(invoiceNumber);
         this.invoiceStatus = invoiceStatus;
         this.invoicePeriod = invoicePeriod;
         this.randomNumber = RandomStringUtils.randomNumeric(4);
@@ -119,6 +121,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         this.sellerName = sellerName;
         this.sellerAddress = sellerAddress;
         this.invoiceItems = invoiceItems;
+    }
+
+    public void updateInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+        this.internalInvoiceNumber = invoiceNumber.replace("-", "");
     }
 
     public boolean canPrintElectronicInvoice() {

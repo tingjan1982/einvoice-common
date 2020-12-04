@@ -49,11 +49,6 @@ public class PendingEInvoiceQueue extends EInvoiceBaseObject {
         CREATE,
 
         /**
-         * New invoice that need post processing to populate invoice number.
-         */
-        INVOICE_NUMBER_MISSING,
-
-        /**
          * Cancel invoice (C0501)
          */
         CANCEL,

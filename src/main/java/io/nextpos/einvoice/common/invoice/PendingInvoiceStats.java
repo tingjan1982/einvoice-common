@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class PendingInvoiceStats {
 
-    private String id;
+    private String ubn;
+
+    private String status;
 
     private int invoiceCount;
 }

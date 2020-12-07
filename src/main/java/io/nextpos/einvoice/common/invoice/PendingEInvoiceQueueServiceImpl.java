@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Transactional("mongoTx")
@@ -62,15 +65,18 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
-    public List<PendingInvoiceStats> generatePendingEInvoiceStats() {
+    public Map<String, List<PendingInvoiceStats>> generatePendingEInvoiceStats() {
 
         final GroupOperation groupBy = Aggregation.group("ubn", "status")
+                .first("ubn").as("ubn")
+                .first("status").as("status")
                 .count().as("invoiceCount");
 
         final TypedAggregation<PendingEInvoiceQueue> aggregation = Aggregation.newAggregation(PendingEInvoiceQueue.class, groupBy);
 
         final AggregationResults<PendingInvoiceStats> result = mongoTemplate.aggregate(aggregation, PendingInvoiceStats.class);
 
-        return result.getMappedResults();
+        return result.getMappedResults().stream()
+                .collect(groupingBy(PendingInvoiceStats::getUbn));
     }
 }

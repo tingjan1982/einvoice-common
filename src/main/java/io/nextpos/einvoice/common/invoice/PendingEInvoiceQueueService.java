@@ -1,6 +1,7 @@
 package io.nextpos.einvoice.common.invoice;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PendingEInvoiceQueueService {
 
@@ -14,5 +15,5 @@ public interface PendingEInvoiceQueueService {
 
     void deleteByStatus(PendingEInvoiceQueue.PendingEInvoiceStatus status);
 
-    List<PendingInvoiceStats> generatePendingEInvoiceStats();
+    Map<String, List<PendingInvoiceStats>> generatePendingEInvoiceStats();
 }

@@ -13,13 +13,16 @@ import java.time.YearMonth;
 import java.time.chrono.MinguoDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
@@ -76,12 +79,21 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     }
 
     @Override
+    public Map<String, List<InvoiceNumberRange>> getRecentInvoiceNumberRanges() {
+
+        List<String> rangeIdentifiers = new ArrayList<>();
+        rangeIdentifiers.add(getLastRangeIdentifier());
+        rangeIdentifiers.add(getCurrentRangeIdentifier());
+        rangeIdentifiers.add(getNextRangeIdentifier());
+
+        return invoiceNumberRangeRepository.findAllByRangeIdentifierInOrderByRangeIdentifier(rangeIdentifiers).stream()
+                .collect(groupingBy(InvoiceNumberRange::getUbn));
+    }
+
+    @Override
     public List<InvoiceNumberRange> getInvoiceNumberRangesByLastRangeIdentifier() {
 
-        int monthToSubtract = YearMonth.now().getMonthValue() % 2 == 0 ? 2 : 1;
-        final String lastRangeIdentifier = getRangeIdentifier(YearMonth.now().minusMonths(monthToSubtract));
-
-        return invoiceNumberRangeRepository.findAllByRangeIdentifierAndStatus(lastRangeIdentifier, InvoiceNumberRange.InvoiceNumberRangeStatus.ACTIVE);
+        return invoiceNumberRangeRepository.findAllByRangeIdentifierAndStatus(getLastRangeIdentifier(), InvoiceNumberRange.InvoiceNumberRangeStatus.ACTIVE);
     }
 
     @Override
@@ -149,6 +161,17 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     public String getCurrentRangeIdentifier() {
         return getRangeIdentifier(YearMonth.now());
     }
+
+    private String getLastRangeIdentifier() {
+        int monthToSubtract = YearMonth.now().getMonthValue() % 2 == 0 ? 2 : 1;
+        return getRangeIdentifier(YearMonth.now().minusMonths(monthToSubtract));
+    }
+
+    private String getNextRangeIdentifier() {
+        int monthToAdd = YearMonth.now().getMonthValue() % 2 == 0 ? 2 : 1;
+        return getRangeIdentifier(YearMonth.now().plusMonths(monthToAdd));
+    }
+
 
     @Override
     public String getRangeIdentifier(YearMonth yearMonth) {

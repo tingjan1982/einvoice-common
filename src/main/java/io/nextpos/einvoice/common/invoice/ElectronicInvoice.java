@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -89,6 +89,12 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     private String qrCode1Content;
 
     private String qrCode2Content;
+
+    @Transient
+    private String qrCode1ImageBinary;
+
+    @Transient
+    private String qrCode2ImageBinary;
 
     private List<InvoiceItem> invoiceItems = new ArrayList<>();
 
@@ -174,11 +180,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
 
         qrCodeContent.append(invoiceItems.size()).append(":");
         qrCodeContent.append(invoiceItems.size()).append(":");
-        qrCodeContent.append("2: "); // 0 Big-5, 1 UTF-8, 2 Base64
+        qrCodeContent.append("1: "); // 0 Big-5, 1 UTF-8, 2 Base64
 
-        if (qrCodeContent.length() < 135) {
-            qrCodeContent.append(" ".repeat(135 - qrCodeContent.length()));
-        }
+//        if (qrCodeContent.length() < 135) {
+//            qrCodeContent.append(" ".repeat(135 - qrCodeContent.length()));
+//        }
 
         this.qrCode1Content = qrCodeContent.toString();
     }
@@ -209,11 +215,12 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
                     .append(lineItem.getUnitPrice()).append(":");
         }
 
-        this.qrCode2Content = "**" + Base64.getEncoder().encodeToString(qrCodeContent.toString().getBytes(StandardCharsets.UTF_8));
+        //this.qrCode2Content = "**" + Base64.getEncoder().encodeToString(qrCodeContent.toString().getBytes(StandardCharsets.UTF_8));
+        this.qrCode2Content = "**" + qrCodeContent.toString();
 
-        if (this.qrCode2Content.length() < 135) {
-            this.qrCode2Content += " ".repeat(135 - this.qrCode2Content.length());
-        }
+//        if (this.qrCode2Content.length() < 135) {
+//            this.qrCode2Content += " ".repeat(135 - this.qrCode2Content.length());
+//        }
     }
 
     public String getQrCode1ContentAsHex() {

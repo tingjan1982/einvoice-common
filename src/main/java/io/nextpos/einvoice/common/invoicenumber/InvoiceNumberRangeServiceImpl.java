@@ -1,6 +1,7 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
 import com.mongodb.client.result.UpdateResult;
+import io.nextpos.einvoice.common.shared.InvoiceObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -69,7 +70,7 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
         return invoiceNumberRangeRepository.findByUbnAndRangeIdentifier(ubn, rangeIdentifier).orElseThrow(() -> {
             final String message = String.format("Invoice number range cannot be found: ubn=%s, rangeIdentifier=%s", ubn, rangeIdentifier);
-            throw new RuntimeException(message);
+            throw new InvoiceObjectNotFoundException(message);
         });
     }
 

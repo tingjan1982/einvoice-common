@@ -22,7 +22,9 @@ public interface InvoiceNumberRangeService {
 
     List<InvoiceNumberRange> getInvoiceNumberRangesByLastRangeIdentifier();
 
-    void deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom);
+    InvoiceNumberRange disableOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom);
+
+    InvoiceNumberRange deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom);
 
     void deleteInvoiceNumberRange(String ubn, String rangeIdentifier);
 

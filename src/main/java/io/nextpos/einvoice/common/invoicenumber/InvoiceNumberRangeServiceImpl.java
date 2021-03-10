@@ -51,7 +51,9 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
 
     @Override
     public InvoiceNumberRange getInvoiceNumberRange(String id) {
-        return invoiceNumberRangeRepository.findById(id).orElseThrow();
+        return invoiceNumberRangeRepository.findById(id).orElseThrow(() -> {
+            throw new InvoiceObjectNotFoundException(InvoiceNumberRange.class, id);
+        });
     }
 
 
@@ -98,12 +100,21 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     }
 
     @Override
-    public void deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom) {
+    public InvoiceNumberRange disableOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom) {
+
+        final InvoiceNumberRange invoiceNumberRange = this.getInvoiceNumberRangeByRangeIdentifier(ubn, rangeIdentifier);
+        invoiceNumberRange.disableNumberRangeById(rangeFrom);
+
+        return invoiceNumberRangeRepository.save(invoiceNumberRange);
+    }
+
+    @Override
+    public InvoiceNumberRange deleteOneInvoiceNumberRange(String ubn, String rangeIdentifier, String rangeFrom) {
 
         final InvoiceNumberRange invoiceNumberRange = this.getInvoiceNumberRangeByRangeIdentifier(ubn, rangeIdentifier);
         invoiceNumberRange.deleteNumberRangeById(rangeFrom);
 
-        invoiceNumberRangeRepository.save(invoiceNumberRange);
+        return invoiceNumberRangeRepository.save(invoiceNumberRange);
     }
 
     @Override

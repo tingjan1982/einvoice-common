@@ -1,6 +1,7 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
 import io.nextpos.einvoice.common.shared.EInvoiceBaseObject;
+import io.nextpos.einvoice.common.shared.InvoiceObjectNotFoundException;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,16 +57,25 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
 
     public NumberRange findDispensableNumberRange() {
         return numberRanges.stream()
-                .filter(r -> !r.isFinished())
+                .filter(r -> !r.isFinished() && !r.isDisabled())
                 .findFirst().orElseThrow(() -> {
                     throw new RuntimeException("There is no dispensable number range");
                 });
     }
 
+    /**
+     * Get an unfinished number range or the last number range.
+     */
     public NumberRange findAvailableNumberRange() {
         return numberRanges.stream()
                 .filter(r -> !r.isFinished())
                 .findFirst().orElseGet(() -> numberRanges.get(numberRanges.size() - 1));
+    }
+
+    public void disableNumberRangeById(String id) {
+
+        final NumberRange numberRange = this.findNumberRangeById(id);
+        numberRange.setDisabled(true);
     }
 
     public void deleteNumberRangeById(String id) {
@@ -82,7 +92,7 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
         return numberRanges.stream()
                 .filter(r -> r.getRangeFrom().equals(id))
                 .findFirst().orElseThrow(() -> {
-                    throw new RuntimeException("There is no dispensable number range");
+                    throw new InvoiceObjectNotFoundException(NumberRange.class, id);
                 });
     }
 
@@ -90,7 +100,7 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
     public static class NumberRange {
 
         /**
-         * Example: AW-
+         * Two capitalized letters. Example: AW
          */
         private String prefix;
 
@@ -100,12 +110,21 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
 
         private int currentIncrement;
 
+        /**
+         * Indicates that the number range has started issuing invoice numbers.
+         */
         private boolean started;
 
         /**
-         * indicate if all numbers have been issued.
+         * Indicates if all numbers have been issued.
          */
         private boolean finished;
+
+        /**
+         * Indicates the number range is disabled and cannot be used. Reasons include the number range has been treated as unused numbers
+         * and uploaded to big platform.
+         */
+        private boolean disabled;
 
         public NumberRange(String prefix, String rangeFrom, String rangeTo) {
             this.prefix = prefix;

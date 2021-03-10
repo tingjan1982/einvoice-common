@@ -1,5 +1,6 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
+import io.nextpos.einvoice.common.shared.InvoiceObjectNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,8 +79,18 @@ class InvoiceNumberRangeServiceImplTest {
 
         assertThat(updatedInvoiceNumberRange.findAvailableNumberRange()).isNotNull();
 
+        updatedInvoiceNumberRange.addNumberRange("HH", "10009050", "10009500");
+        invoiceNumberRangeService.saveInvoiceNumberRange(updatedInvoiceNumberRange);
+
+        assertThat(invoiceNumberRangeService.disableOneInvoiceNumberRange(ubn, currentRangeIdentifier, "10009050")
+                .findNumberRangeById("10009050")
+                .isDisabled()).isTrue();
+
+        assertThatThrownBy(() -> invoiceNumberRangeService.deleteOneInvoiceNumberRange(ubn, currentRangeIdentifier, "10009050")
+                .findNumberRangeById("10009050")).isInstanceOf(InvoiceObjectNotFoundException.class);
+
         invoiceNumberRangeService.deleteInvoiceNumberRange(ubn, invoiceNumberRange.getRangeIdentifier());
 
-        assertThatThrownBy(() -> invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId())).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId())).isInstanceOf(InvoiceObjectNotFoundException.class);
     }
 }

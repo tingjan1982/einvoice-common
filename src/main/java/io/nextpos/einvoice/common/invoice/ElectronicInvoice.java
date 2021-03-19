@@ -216,7 +216,8 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         }
 
         //this.qrCode2Content = "**" + Base64.getEncoder().encodeToString(qrCodeContent.toString().getBytes(StandardCharsets.UTF_8));
-        this.qrCode2Content = "**" + qrCodeContent.toString();
+        //this.qrCode2Content = "**" + qrCodeContent.toString();
+        this.qrCode2Content = "**";
 
 //        if (this.qrCode2Content.length() < 135) {
 //            this.qrCode2Content += " ".repeat(135 - this.qrCode2Content.length());

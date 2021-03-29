@@ -103,6 +103,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
      */
     private String buyerUbn;
 
+    /**
+     * Exists mainly for cancel order receipt XML.
+     */
+    private String buyerName;
+
     private CarrierType carrierType;
 
     private String carrierId;

@@ -6,12 +6,20 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.number.NumberStyleFormatter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.chrono.MinguoDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +53,25 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
         this.addNumberRange(prefix, rangeFrom, rangeTo);
     }
 
+    /**
+     * Returns the date range of this invoice number range as LocalDateTime.
+     */
+    public Pair<LocalDateTime, LocalDateTime> getLocalDateTimeRange() {
+
+        final int minguoYear = Integer.parseInt(rangeIdentifier.substring(0, 3));
+        final int startMonth = Integer.parseInt(rangeIdentifier.substring(3, 5));
+
+        final MinguoDate startDate = MinguoDate.now(ZoneId.of("Asia/Taipei")).with(ChronoField.YEAR, minguoYear)
+                .with(ChronoField.MONTH_OF_YEAR, startMonth)
+                .with(ChronoField.DAY_OF_MONTH, 1);
+
+        final MinguoDate endDate = startDate.plus(1, ChronoUnit.MONTHS).with(TemporalAdjusters.lastDayOfMonth());
+
+        return Pair.of(LocalDate.from(startDate).atStartOfDay(),
+                LocalDate.from(endDate).atTime(23, 59, 59));
+    }
+
+    @Deprecated
     public String getShortRangeIdentifier() {
         return rangeIdentifier.substring(0, 3) + rangeIdentifier.substring(5);
     }

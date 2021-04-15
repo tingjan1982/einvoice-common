@@ -1,10 +1,12 @@
 package io.nextpos.einvoice.common.invoicenumber;
 
 import io.nextpos.einvoice.common.shared.InvoiceObjectNotFoundException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -92,5 +94,18 @@ class InvoiceNumberRangeServiceImplTest {
         invoiceNumberRangeService.deleteInvoiceNumberRange(ubn, invoiceNumberRange.getRangeIdentifier());
 
         assertThatThrownBy(() -> invoiceNumberRangeService.getInvoiceNumberRange(invoiceNumberRange.getId())).isInstanceOf(InvoiceObjectNotFoundException.class);
+    }
+
+    @Test
+    void getDateRange() {
+
+        final String rangeIdentifier = invoiceNumberRangeService.getCurrentRangeIdentifier();
+        InvoiceNumberRange invoiceNumberRange = new InvoiceNumberRange("83515813", rangeIdentifier, "AW", "00002350", "00002359");
+
+        final Pair<LocalDateTime, LocalDateTime> dateRange = invoiceNumberRange.getLocalDateTimeRange();
+        final LocalDateTime now = LocalDateTime.now();
+
+        assertThat(now.compareTo(dateRange.getLeft())).isGreaterThanOrEqualTo(0);
+        assertThat(now.compareTo(dateRange.getRight())).isLessThanOrEqualTo(0);
     }
 }

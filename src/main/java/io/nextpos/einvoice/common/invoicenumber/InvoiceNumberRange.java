@@ -71,7 +71,6 @@ public class InvoiceNumberRange extends EInvoiceBaseObject {
                 LocalDate.from(endDate).atTime(23, 59, 59));
     }
 
-    @Deprecated
     public String getShortRangeIdentifier() {
         return rangeIdentifier.substring(0, 3) + rangeIdentifier.substring(5);
     }

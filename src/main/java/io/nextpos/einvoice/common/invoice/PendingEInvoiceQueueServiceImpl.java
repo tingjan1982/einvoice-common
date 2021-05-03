@@ -45,6 +45,15 @@ public class PendingEInvoiceQueueServiceImpl implements PendingEInvoiceQueueServ
     }
 
     @Override
+    public PendingEInvoiceQueue reissueErroredEInvoiceQueue(String invoiceNumber, PendingEInvoiceQueue.PendingEInvoiceType invoiceType) {
+        final PendingEInvoiceQueue pendingEInvoiceQueue = pendingEInvoiceQueueRepository.findByInvoiceNumberAndInvoiceTypeAndStatus(invoiceNumber, invoiceType, PendingEInvoiceQueue.PendingEInvoiceStatus.ERROR);
+
+        pendingEInvoiceQueue.setStatus(PendingEInvoiceQueue.PendingEInvoiceStatus.PENDING);
+
+        return pendingEInvoiceQueueRepository.save(pendingEInvoiceQueue);
+    }
+
+    @Override
     public PendingEInvoiceQueue updatePendingEInvoiceQueue(PendingEInvoiceQueue pendingEInvoiceQueue) {
         return pendingEInvoiceQueueRepository.save(pendingEInvoiceQueue);
     }

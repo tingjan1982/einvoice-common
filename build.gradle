@@ -87,7 +87,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = 'io.nextpos.einvoice'
             artifactId = 'einvoice-common'
-            version = '1.4.2'
+            version = '1.4.3'
             from components.java
 
             versionMapping {

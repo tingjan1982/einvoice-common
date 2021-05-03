@@ -126,8 +126,9 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
         this.invoicePeriod = invoicePeriod;
         this.randomNumber = RandomStringUtils.randomNumeric(4);
         this.invoiceCreatedDate = new Date();
-        this.salesAmount = salesAmount.setScale(0, RoundingMode.HALF_UP);
-        this.taxAmount = taxAmount.setScale(0, RoundingMode.HALF_UP);
+
+        this.updateSalesAndTaxAmount(salesAmount, taxAmount);
+
         this.sellerUbn = sellerUbn;
         this.sellerName = sellerName;
         this.sellerAddress = sellerAddress;
@@ -137,6 +138,11 @@ public class ElectronicInvoice extends EInvoiceBaseObject {
     public void updateInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
         this.internalInvoiceNumber = invoiceNumber.replace("-", "");
+    }
+
+    public void updateSalesAndTaxAmount(BigDecimal salesAmount, BigDecimal taxAmount) {
+        this.salesAmount = salesAmount.setScale(0, RoundingMode.HALF_UP);
+        this.taxAmount = taxAmount.setScale(0, RoundingMode.HALF_UP);
     }
 
     public boolean canPrintElectronicInvoice() {

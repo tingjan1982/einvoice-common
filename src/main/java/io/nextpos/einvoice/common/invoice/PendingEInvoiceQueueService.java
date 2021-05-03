@@ -7,6 +7,8 @@ public interface PendingEInvoiceQueueService {
 
     PendingEInvoiceQueue createPendingEInvoiceQueue(ElectronicInvoice electronicInvoice, PendingEInvoiceQueue.PendingEInvoiceType pendingEInvoiceType);
 
+    PendingEInvoiceQueue reissueErroredEInvoiceQueue(String invoiceNumber, PendingEInvoiceQueue.PendingEInvoiceType invoiceType);
+
     PendingEInvoiceQueue updatePendingEInvoiceQueue(PendingEInvoiceQueue pendingEInvoiceQueue);
 
     List<PendingEInvoiceQueue> findPendingEInvoicesByUbn(String ubn);

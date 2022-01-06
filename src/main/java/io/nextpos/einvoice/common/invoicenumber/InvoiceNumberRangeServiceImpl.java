@@ -189,7 +189,7 @@ public class InvoiceNumberRangeServiceImpl implements InvoiceNumberRangeService 
     public String getRangeIdentifier(YearMonth yearMonth) {
 
         StringBuilder rangeIdentifier = new StringBuilder();
-        rangeIdentifier.append(MinguoDate.now().get(ChronoField.YEAR));
+        rangeIdentifier.append(MinguoDate.from(yearMonth.atDay(1)).get(ChronoField.YEAR));
 
         if (yearMonth.getMonthValue() % 2 == 0) {
             rangeIdentifier.append(yearMonth.minusMonths(1).format(FORMATTER)).append(yearMonth.format(FORMATTER));

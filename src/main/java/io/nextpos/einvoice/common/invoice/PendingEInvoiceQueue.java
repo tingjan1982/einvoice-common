@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,6 +24,7 @@ public class PendingEInvoiceQueue extends EInvoiceBaseObject {
 
     private PendingEInvoiceType invoiceType;
 
+    @Indexed
     private PendingEInvoiceStatus status;
 
     @DBRef
